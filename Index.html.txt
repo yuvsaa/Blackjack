@@ -5,36 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack</title>
     <style>
-        .red { color: red; }
-        .black { color: black; }
+        /* Styling for the game */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #game {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to Blackjack</h1>
+    <div id="game">
+        <h1>Welcome to Blackjack</h1>
+        <div id="bet-area">
+            <label for="bet-input">Place your bet:</label>
+            <input type="number" id="bet-input" min="1">
+            <button id="bet-button">Place Bet</button>
+        </div>
+        <div id="deck"></div>
+        <div id="player-hand" class="hand"></div>
+        <div id="dealer-hand" class="hand"></div>
+        <button id="hit-button">Hit</button>
+        <button id="stand-button">Stand</button>
+    </div>
     <script>
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
+        let deck = [];
+        let playerHand = [];
+        let dealerHand = [];
+        let bet = 0;
+        let playerMoney = 100;
+
+        // Function to create a deck of cards
+        function createDeck() {
+            const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+            const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({ value, suit });
+                }
+            }
+            // Shuffle the deck using Fisher-Yates algorithm
+            shuffleDeck();
+        }
+
+        // Shuffle function
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                [deck[i], deck[j]] = [deck[j], deck[i]];
             }
-            return array;
         }
 
-        function startNewGame() {
-            // Code to start a new game
-            // Deduct bet from player
-            player.balance -= player.currentBet;
+        // Initialize game
+        function initializeGame() {
+            createDeck();
+            // Other game initialization code
+            updateDisplay();
         }
 
+        // Update the display
+        function updateDisplay() {
+            document.getElementById('player-hand').textContent = JSON.stringify(playerHand);
+            document.getElementById('dealer-hand').textContent = JSON.stringify(dealerHand);
+        }
+
+        // Bet deduction logic
+        document.getElementById('bet-button').addEventListener('click', () => {
+            const betInput = document.getElementById('bet-input').value;
+            bet = Math.max(0, Math.min(playerMoney, betInput));
+            playerMoney -= bet;
+            updateDisplay();
+        });
+
+        // Simplified endGame function
         function endGame() {
-            // Simplified logic to end game
-            if (player.hasWon()) {
-                // Handle win
-            } else if (player.hasLost()) {
-                // Handle loss
+            // Logic for ending the game
+            if (/* player wins */) {
+                playerMoney += bet * 2;
+            } else if (/* dealer wins */) {
+                // Player loses bet
+            } else {
+                // Push condition—return bet
+                playerMoney += bet;
             }
-            // Reset game state
+            // Reset for new game
+            bet = 0;
+            updateDisplay();
         }
+
+        // Start the game
+        initializeGame();
     </script>
 </body>
 </html>
